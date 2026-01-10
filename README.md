@@ -1,5 +1,71 @@
 # JACK (for Rust)
 
+---
+## Worik's Hack
+
+Make this work perfectly for x86_64 and aarch64
+
+### Failing Tests x86_64
+
+* `client_callbacks`
+* `one_second_is_sample_rate_frames`
+* `starting_transport_sets_state_to_started`
+
+**`client_callbacks`**
+
+* Passes when run on its own 
+```sh
+rust-jack$ cargo test client_callbacks
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s
+     Running unittests src/lib.rs (target/debug/deps/jack-86a051f6269653f2)
+
+running 1 test
+test properties::metadata::tests::client_callbacks ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 31 filtered out; finished in 0.13s
+```
+
+When run with `cargo test`:
+
+
+```plaintext
+---- properties::metadata::tests::client_callbacks stdout ----
+
+thread 'properties::metadata::tests::client_callbacks' (324469) panicked at src/properties.rs:508:13:
+assertion `left == right` failed
+  left: Ok(Created { subject: 8589934679, key: "blah" })
+ right: Err(Timeout)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+JackMessageBuffer::SetInitCallback : callback could not be executed
+```
+
+**`one_second_is_sample_rate_frames`**
+
+* Fails on when run on its own:
+
+```
+thread 'tests::time::one_second_is_sample_rate_frames' (324559) panicked at src/tests/time.rs:25:5:
+assert_abs_diff_eq!((t1 - t0) as f64, client.sample_rate() as f64, epsilon = client.sample_rate() as f64 * 1e-3)
+
+    left  = 0.0
+    right = 48000.0
+```
+
+**`starting_transport_sets_state_to_started`**
+
+* Passes when on its owne
+* When run with `cargo test`
+```
+---- tests::transport::starting_transport_sets_state_to_started stdout ----
+
+thread 'tests::transport::starting_transport_sets_state_to_started' (324535) panicked at src/tests/transport.rs:27:5:
+assertion `left == right` failed
+  left: Starting
+ right: Rolling
+```
+
+---
+
 Rust bindings for [JACK Audio Connection Kit](<https://jackaudio.org>).
 
 | [![Crates.io](https://img.shields.io/crates/v/jack.svg)](https://crates.io/crates/jack) | [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)                                                          |
