@@ -277,11 +277,12 @@ impl Client {
     ///
     /// The `port_name` must be unique among all ports owned by this client. If the name is not
     /// unique, the registration will fail.
-    pub fn register_port<PS: PortSpec>(
+    pub fn register_port<PS: PortSpec, S: AsRef<str>>(
         &self,
-        port_name: &str,
+        port_name: S,
         port_spec: PS,
     ) -> Result<Port<PS>, Error> {
+        let port_name = port_name.as_ref();
         let port_name_c = ffi::CString::new(port_name).unwrap();
         let port_type_c = ffi::CString::new(port_spec.jack_port_type()).unwrap();
         let port_flags = port_spec.jack_flags().bits();
